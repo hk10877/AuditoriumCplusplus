@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Node.h"
-
+#include "Seat.h"
 
 /*
 
@@ -46,7 +46,7 @@ o Methods
   void Node:: setNode(char data)
   {
     this->data = data;
-    this->payload->ticketType=data;
+    this->payload->setTicketType(data);
   }
 
 //Overloaded constructor
