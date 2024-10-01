@@ -1,15 +1,17 @@
 #ifndef NODE_H
- #define NODE_H
- #include <string>
+#define NODE_H
+#include <string>
 #include "Seat.h"
 
 class Node {
-public:
+
+  private:
   char data;
   Node* next;
   Node* down;
   Seat* payload;
 
+  public:
   // Default constructor
   Node();
   
@@ -18,8 +20,13 @@ public:
   Node(char data);
 
   char getNode(); //Accessor
+  Node* getDown(){return down;}
+  Node* getNext(){return next;}
 
-  void setNode(char data); //Mutator
+  void setNode(char data);//{this->data = data;} //Mutator
+  void setPayload(Seat* payload){this->payload = payload;}
+  void setNext(Node* next){this->next = next;}
+  void setDown(Node* down){this->down = down;}
 
 //overloaded operator
   friend std::ostream& operator<<(std::ostream& ostr, const Node& obj);
