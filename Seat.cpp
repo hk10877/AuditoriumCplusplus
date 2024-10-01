@@ -38,9 +38,9 @@ o Methods
   this->ticketType = ticketType;
 }
 
-char Seat::GetSeat() { return this->seat; } //Accessor
+char Seat::getSeat() { return this->seat; } //Accessor
 
-void Seat::SetSeat(char seat) { this->seat = seat; }  //Mutator
+void Seat::setSeat(char seat) { this->seat = seat; }  //Mutator
 
 //Overloaded << operator
 std::ostream& operator<<(std::ostream& ostr, const Seat& obj){
