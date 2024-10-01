@@ -44,8 +44,8 @@ Auditorium::Auditorium(std:: string totalAudiLine)
       seatType = totalAudiLine.at(i); //takes each letter of the string containing the auditorium
       Node* new_node = new Node;
       Seat* new_seat = new Seat(numRows, numCols, seatType); // creates a new seat object
-      new_node->data = seatType;
-      new_node->payload = new_seat;
+      new_node->setPayload(new_seat);
+      new_node->setNode(seatType);
 
       if (i ==0 && seatType == 'X') //totalAudiLine conatins each row of the auditorium separated with an 'X'
       {
@@ -81,25 +81,25 @@ void Auditorium::insertNodeNext(char dataAudi, int row, int col)
     Node* newNode = new Node(dataAudi);
     char column = static_cast<char>(col); // converting int to char
     Seat* newSeat = new Seat(row, column, dataAudi);
-    newNode->payload = newSeat;
+    newNode->setPayload(newSeat);
   
     // Traverse till end of list
   Node* cur = head;
   
-  while (cur->down != nullptr) 
+  while (cur->getDown() != nullptr) 
   {
     // Update cur
-    cur = cur->down;
+    cur = cur->getDown();
   }
    
-    while (cur->next != NULL) {
+    while (cur->getNext() != NULL) {
   
         // Update cur
-        cur = cur->next;
+        cur = cur->getNext();
     }
   
-    // Insert at the last.
-    cur->next = newNode;
+    // Insert at the last.///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    cur->setNext(newNode);
   
 }
 
@@ -111,28 +111,28 @@ void Auditorium::insertNodeDown(char dataAudi, int row, int col)
   Node* aNode = new Node(dataAudi);
   char column = static_cast<char>(col); // converting int to char
   Seat* newSeat = new Seat(row, column, dataAudi);
-  aNode->payload = newSeat;
+  aNode->setPayload(newSeat);
   
   Node* cur = head;
   
    // Traverse till end of list
-  while (cur->down != nullptr) 
+  while (cur->getDown() != nullptr) 
   {
      // Update cur
-    cur = cur->down;
+    cur = cur->getDown();
   }
   
   // Insert at the last.
-      cur->down = aNode;
+      cur->setDown(aNode);
 
 }
 
 //Creates the file "A1.txt" and calls the overloaded << operator to print to the file
-//Parameter: Nothing
+//Parameter: string filename
 //Return Type: void
-void Auditorium::printAuditorium()
+void Auditorium::printAuditorium(std::string fileName)
 {  
-    std::ofstream MyFile("A1.txt"); // creates file
+    std::ofstream MyFile(fileName); // creates file
     if (MyFile.good()) //Missing file check
     {
     std::cout << "File created" << std::endl;
@@ -169,10 +169,10 @@ int Auditorium::getRows()
   {
     while (horizontal != nullptr) 
     {
-      horizontal = horizontal->next;
+      horizontal = horizontal->getNext();
     }
     
-    vertical = vertical->down; //go to the next row
+    vertical = vertical->getDown(); //go to the next row
     countRows++;
     horizontal = vertical; //setting horizontal to point to the starting of the next row
   }
@@ -204,10 +204,10 @@ int Auditorium::getCols()
       while (horizontal != nullptr) 
       {
         countCols++;
-        horizontal = horizontal->next;
+        horizontal = horizontal->getNext();
       }
       
-      vertical = vertical->down; //go to the next row
+      vertical = vertical->getDown(); //go to the next row
       
       horizontal = vertical; //setting horizontal to point to the starting of the next row
     }
@@ -252,31 +252,31 @@ void Auditorium::displayPrintAuditorium()
     while (horizontal != nullptr) 
     {
       // if the seat is already occupied by an adult, child, or senior, it replaces it with a '#'
-      if (horizontal->data == 'A')
+      if (horizontal->getNode() == 'A')
       {
         std::cout << '#';
       }
 
-      else if (horizontal->data == 'C')
+      else if (horizontal->getNode() == 'C')
       {
         std::cout << '#';
       }
 
-      else if (horizontal->data == 'S')
+      else if (horizontal->getNode() == 'S')
       {
         std::cout << '#';
       }
       
       else 
       {
-        std::cout << horizontal->data;
+        std::cout << horizontal->getNode();
       }  
       
-      horizontal = horizontal->next;
+      horizontal = horizontal->getNext();
       
     }
     
-    vertical = vertical->down;
+    vertical = vertical->getDown();
     horizontal = vertical;
     std::cout << std::endl;
 
@@ -311,11 +311,11 @@ bool Auditorium::isAvailable(int row, char seat, int totalQ)
     countSeat =0;
     while (countSeat != numSeat -1) // Checks if the program has reached the desired column
     { 
-      horizontal = horizontal->next;
+      horizontal = horizontal->getNext();
       countSeat++;
     }
     
-    vertical = vertical->down;
+    vertical = vertical->getDown();
     countRow++;
 
     cur = horizontal;
@@ -328,7 +328,7 @@ bool Auditorium::isAvailable(int row, char seat, int totalQ)
       {
         return false;
       }
-      
+      //std::cout << cur ->getNode() << std::endl;
       if (cur ->getNode() != '.') // Checks if the specific seat is not empty
       {
         return false;
@@ -336,7 +336,7 @@ bool Auditorium::isAvailable(int row, char seat, int totalQ)
       
       if (cur ->getNode() == '.') // Checks if the specific seat is empty
       {
-        cur = cur ->next;
+        cur = cur ->getNext();
         totalQ--;
 
         if (totalQ == 0)
@@ -379,11 +379,11 @@ void Auditorium::reserveSeatsInAuditorium(int row, char seat, int adultQ, int ch
       countSeat =0;
       while (countSeat != numSeat -1) // Checks if the program has reached the desired column
       { 
-        horizontal = horizontal->next;
+        horizontal = horizontal->getNext();
         countSeat++;
       }
       
-      vertical = vertical->down;
+      vertical = vertical->getDown();
       countRow++;
 
       cur = horizontal;
@@ -401,42 +401,81 @@ void Auditorium::reserveSeatsInAuditorium(int row, char seat, int adultQ, int ch
         //reserves the desired seats
         if (adultQ > 0)
         {
-          cur ->setNode('A');
+          cur->setNode('A');
           adultQ--;
         }
 
         else if (childQ > 0)
         {
-          cur ->setNode('C');
+          cur->setNode('C');
           childQ--;
         }
 
         else //(seniorQ > 0)
         {
-          cur ->setNode('S');
+          cur->setNode('S');
           seniorQ--;
         }
 
         
-          cur = cur ->next;
+          cur = cur ->getNext();
           totalQ--;
           
       }
       
     }
 
+//Function that makes a reserved seat empty
+//Parameter: int row, char seat
+char Auditorium::unReserveSeatsInAuditorium(int row, char seat)
+{
+    int numSeat = seat - 65 + 1; // converts char to int
+
+      Node* horizontal = head;
+      Node* vertical = head;
+      int countSeat = 0;
+      int countRow = 0;
+      Node* cur = head;
+      
+        // Check for empty list.
+        if (head == NULL) 
+        {
+            std::cout << "List empty" << std::endl;
+        }
+      
+        // Traverse the list.
+        while ( countRow != row) // Checks if the program has reached the desired row
+        {
+          countSeat =0;
+          while (countSeat != numSeat -1) // Checks if the program has reached the desired column
+          { 
+            horizontal = horizontal->getNext();
+            countSeat++;
+          }
+          
+          vertical = vertical->getDown();
+          countRow++;
+    
+          cur = horizontal;
+          horizontal = vertical;
+    
+        }
+        char kind = cur->getNode();
+        cur ->setNode('.'); //Makes the seat empty
+        return kind;
+}
+
+
 //Displays the recipt for the reservation
 //Parameter: Nothing
-//Return Type: void
-void Auditorium::displayReport() 
+//Return Type: string that contains the report for a Auditorium
+std::string Auditorium::displayAdminReport() 
 {
 
   int adultQ = 0;
   int seniorQ = 0;
   int childQ = 0;
   int period = 0;
-
-  
 
   Node* horizontal = head;
   Node* vertical = head;
@@ -445,7 +484,7 @@ void Auditorium::displayReport()
     if (head == NULL) 
     {
         std::cout << "List empty" << std::endl;
-        return;
+        return "";
     }
 
   //counts the number of tickets to be purchased
@@ -453,17 +492,17 @@ void Auditorium::displayReport()
     {
       while (horizontal != nullptr) 
       {
-        if (horizontal->data == 'A')
+        if (horizontal->getNode() == 'A')
         {
           adultQ++;
         }
 
-        else if (horizontal->data == 'C')
+        else if (horizontal->getNode() == 'C')
         {
           childQ++;
         }
 
-        else if (horizontal->data == 'S')
+        else if (horizontal->getNode() == 'S')
         {
           seniorQ++;
         }
@@ -473,29 +512,31 @@ void Auditorium::displayReport()
           period++;
         }
         
-        horizontal = horizontal->next;
+        horizontal = horizontal->getNext();
       }
       
-      vertical = vertical->down;
+      vertical = vertical->getDown();
       horizontal = vertical;
 
     }
 
-  int totalSeats = adultQ + seniorQ + childQ + period;
-  int totalTickets = adultQ + seniorQ + childQ;
+  int totalReserved = adultQ + seniorQ + childQ;
 
   double totalSales = 10 * adultQ + 5 * childQ + 7.5 * seniorQ;
+  
+  std::string periodString = std::to_string(period);
+  std::string totalReservedString = std::to_string(totalReserved);
+  std::string adultQString = std::to_string(adultQ);
+  std::string childQString = std::to_string(childQ);
+  std::string seniorQString = std::to_string(seniorQ);
+  std::string totalSalesString = std::to_string(totalSales);
 
-  std::cout << "Total Seats:	" << totalSeats << std::endl;
-  std::cout << "Total Tickets:	" << totalTickets << std::endl;
-  std::cout << "Adult Tickets:	" << adultQ << std::endl;
-  std::cout << "Child Tickets:	" << childQ << std::endl;
-  std::cout << "Senior Tickets:	" << seniorQ << std::endl;
-  std::cout << "Total Sales:	$" << std::fixed << std::setprecision(2) << totalSales << std::endl;
+  std::string report = periodString + "   " + totalReservedString + "   " + adultQString + "   "+ childQString +"   "+ seniorQString +"   " + totalSalesString;
+  
+  std::cout << period <<"   " << totalReserved <<"   " << adultQ <<"   "<< childQ <<"   "<< seniorQ <<"   $"<< std::fixed << std::setprecision(2) << totalSales << std::endl;
+  return report;
   
 }
-
-
 
 
 //Incase the seats that the user wants is not available for reservation, this function returns the best seats availble for reservation according to the center of the auditorium
@@ -558,12 +599,12 @@ std::string Auditorium::bestAvailable(int totalQuantity)
           
             for (int i = 0; i < totalQuantity -1; i++) // checks if there are empty seats in a row
               {
-                if (ptr->next == nullptr)
+                if (ptr->getNext() == nullptr)
                 {
                   cond = false;
                   break;
                 }
-                ptr = ptr->next;
+                ptr = ptr->getNext();
                 copyOfColTrack++;
                 
                 if (ptr->getNode() != '.')
@@ -608,15 +649,13 @@ std::string Auditorium::bestAvailable(int totalQuantity)
           
           
         }
-        horizontal = horizontal->next;
+        horizontal = horizontal->getNext();
         
       }
       rowTrack++;
       colTrack =0;
-
-      //std::cout << std::endl;
       
-      vertical = vertical->down;
+      vertical = vertical->getDown();
       
       
       horizontal = vertical;
@@ -670,11 +709,11 @@ Auditorium::~Auditorium()
         while (horizontal != nullptr) 
         {
           prev = horizontal;
-          horizontal = horizontal->next;  
+          horizontal = horizontal->getNext();  
           delete prev; // deletes the nodes
         }
         
-        vertical = vertical->down;
+        vertical = vertical->getDown();
         horizontal = vertical;
         
       }
@@ -684,7 +723,7 @@ Auditorium::~Auditorium()
 
 // Overloaded << operator
 // create a string that contains the contents of each row in the theater
-// traverses the grid and uses each node’s overloaded << operator
+// traverses the grid and uses each node overloaded << operator
 // inserts a newline at the end of each row
 std::ostream& operator<<(std::ostream& ostr, const Auditorium& obj){
    Node* horizontal = obj.head;
@@ -703,10 +742,10 @@ std::ostream& operator<<(std::ostream& ostr, const Auditorium& obj){
       while (horizontal != nullptr) 
       {
         ostr << *horizontal;
-        horizontal = horizontal->next;        
+        horizontal = horizontal->getNext();        
       }
       
-      vertical = vertical->down;
+      vertical = vertical->getDown();
       horizontal = vertical;
       if (vertical != nullptr)
       {
