@@ -1,4 +1,3 @@
-//Harshita Kumari NetID: hxk220066
 #ifndef SEAT_H
 #define SEAT_H
 #include <string>
