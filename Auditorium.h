@@ -1,6 +1,6 @@
 #ifndef AUDITORIUM_H
-#define AUDITORIUM_H
-#include <string>
+ #define AUDITORIUM_H
+ #include <string>
 #include "Node.h"
 
 class Auditorium 

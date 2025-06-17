@@ -1,6 +1,6 @@
 #ifndef NODE_H
-#define NODE_H
-#include <string>
+ #define NODE_H
+ #include <string>
 #include "Seat.h"
 
 class Node {
